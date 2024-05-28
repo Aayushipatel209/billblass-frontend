@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<style>
+  #CART
+  {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .cart-button
+  {
+    border-radius: 50px;
+    background-color: black;
+    color: whitesmoke;
+    padding: 5px 10px;
+  }
+</style>
+<body>
+      <h1 style="text-align: center; padding-top: 2%;">CART PAGE</h1>
+
+      <div id="CART" ></div>
+</body>
+</html>
+
+<script>
+let cartdata
+function Fetchdata(){
+    fetch("https://billblass-backand.onrender.com/cart")
+    .then((res)=>res.json())
+    .then((data)=>{
+        CardList(data)
+        cartdata=data
+    })
+    .catch((err)=>console.log(err))
+    }
+    Fetchdata()
+
+    function CardList(data)
+    {
+       const store=data.map((el)=>SingleCard( el.name,el.image,el.price,el.id))
+        document.getElementById("CART").innerHTML=store.join('');
+    }
+
+    function SingleCard(name,image,price,id){
+     
+        let Card=`
+        <a href="des.html?name=${encodeURIComponent(name)}&image=${encodeURIComponent(image)}&price=${encodeURIComponent(price)}">
+        <div class="image">
+            <img src=${image} alt="" height="400px" width="400px"> </a>
+            <h4 class="text" style="margin: 0px; padding-bottom: 10%; margin-left: 2%; font-size:20px;">${name} : $ ${price}</h4>
+           <button data-id="${id}" class="cart-button">DELETE</button>
+      </div>  
+    
+    
+    `
+      return Card
+    }
+
+
+    document.addEventListener("click", (el) => {
+    if (el.target.classList.contains("cart-button")) {
+      DeleteData(el.target.dataset.id);
+    }
+  })
+
+  function DeleteData(id) {
+    fetch(`https://billblass-backand.onrender.com/cart/${id}`, {
+      method: 'DELETE',
+    })
+
+      .then((res) => res.json())
+      .then((data) => {
+        alert("Deleted..")
+        console.log(data)
+      })
+      .catch((err) => console.log(err))
+  }
+    
+</script>
